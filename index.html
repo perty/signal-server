@@ -11,16 +11,37 @@
         socket.on("connect", () => {
             el = document.getElementById('connect-id');
             el.innerHTML = 'Connected with id: ' + socket.id;
+            btn = document.getElementById('connect-button');
+            btn.setAttribute('value', 'Disconnect');
+        });
+
+        socket.on("disconnect", () => {
+            el = document.getElementById('connect-id');
+            el.innerHTML = 'Not connected';
+            btn = document.getElementById('connect-button');
+            btn.setAttribute('value', 'Connect');
         });
 
         socket.on('time', (timeString) => {
             el = document.getElementById('server-time');
             el.innerHTML = 'Server time: ' + timeString;
         });
+
+        const toggleConnection = () => {
+            el = document.getElementById('connect-id');
+            if (socket.connected) {
+                el.innerHTML = 'Disconnecting';
+                socket.disconnect();
+            } else {
+                el.innerHTML = 'Connecting';
+                socket.connect();
+            }
+        }
     </script>
 </head>
 <body>
-<p id="connect-id"></p>
 <p id="server-time"></p>
+<p id="connect-id">Not connected</p>
+<input id="connect-button" type="button" value="XX" onclick="toggleConnection()" />
 </body>
 </html>
