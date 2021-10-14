@@ -1,10 +1,17 @@
 <html lang="en">
 <head>
     <title>Socket.io example</title>
-    <script src="https://cdn.socket.io/4.2.0/socket.io.min.js" integrity="sha384-PiBR5S00EtOj2Lto9Uu81cmoyZqR57XcOna1oAuVuIEjzj0wpqDVfD0JA9eXlRsj" crossorigin="anonymous"></script>
+    <script src="https://cdn.socket.io/4.2.0/socket.io.min.js"
+            integrity="sha384-PiBR5S00EtOj2Lto9Uu81cmoyZqR57XcOna1oAuVuIEjzj0wpqDVfD0JA9eXlRsj"
+            crossorigin="anonymous"></script>
     <script>
         let socket = io();
         let el;
+
+        socket.on("connect", () => {
+            el = document.getElementById('connect-id');
+            el.innerHTML = 'Connected with id: ' + socket.id;
+        });
 
         socket.on('time', (timeString) => {
             el = document.getElementById('server-time');
@@ -13,6 +20,7 @@
     </script>
 </head>
 <body>
+<p id="connect-id"></p>
 <p id="server-time"></p>
 </body>
 </html>
