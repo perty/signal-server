@@ -6,34 +6,27 @@
             crossorigin="anonymous"></script>
     <script>
         let socket = io();
-        let el;
 
         socket.on("connect", () => {
-            el = document.getElementById('connect-id');
-            el.innerHTML = 'Connected with id: ' + socket.id;
-            btn = document.getElementById('connect-button');
-            btn.setAttribute('value', 'Disconnect');
+            document.getElementById('connect-id').innerHTML = 'Connected with id: ' + socket.id;
+            document.getElementById('connect-button').setAttribute('value', 'Disconnect');
         });
 
         socket.on("disconnect", () => {
-            el = document.getElementById('connect-id');
-            el.innerHTML = 'Not connected';
-            btn = document.getElementById('connect-button');
-            btn.setAttribute('value', 'Connect');
+            document.getElementById('connect-id').innerHTML = 'Not connected';
+            document.getElementById('connect-button').setAttribute('value', 'Connect');
         });
 
         socket.on('time', (timeString) => {
-            el = document.getElementById('server-time');
-            el.innerHTML = 'Server time: ' + timeString;
+            document.getElementById('server-time').innerHTML = 'Server time: ' + timeString;
         });
 
         const toggleConnection = () => {
-            el = document.getElementById('connect-id');
             if (socket.connected) {
-                el.innerHTML = 'Disconnecting';
+                document.getElementById('connect-id').innerHTML = 'Disconnecting';
                 socket.disconnect();
             } else {
-                el.innerHTML = 'Connecting';
+                document.getElementById('connect-id').innerHTML = 'Connecting';
                 socket.connect();
             }
         }
