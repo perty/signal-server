@@ -8,11 +8,11 @@ const PORT = process.env.PORT || 3000;
 const indexHtml = '/index.html';
 
 const app = express()
-    .use((req, res) => res.sendFile(indexHtml, { root: __dirname }))
     .use(cors({origin: '*'}))
+    .use((req, res) => res.sendFile(indexHtml, {root: __dirname}))
     .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
-const io = new Server(app);
+const io = new Server(app, {cors: {origin: '*'}});
 
 io.on('connection', (socket) => {
     console.log('Client connected');
