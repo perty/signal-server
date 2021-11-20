@@ -16,7 +16,15 @@ const io = new Server(app, {cors: {origin: '*'}});
 
 io.on('connection', (socket) => {
     console.log('Client connected');
-    socket.on('disconnect', () => console.log('Client disconnected'));
+    socket.broadcast.emit('signal', 'client connected');
+    socket.on('signal', function (data) {
+        console.log('Broadcasting signal', data);
+        socket.broadcast.emit('signal', data);  // Echo to all but the sender.
+    });
+    socket.on('disconnect', () => {
+        console.log('Client disconnected');
+        socket.broadcast.emit('signal', 'client disconnected')
+    });
 });
 
 setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
