@@ -1,46 +1,52 @@
 <html lang="en">
 <head>
-    <title>Socket.io example</title>
+    <title>Signal server client</title>
     <script src="https://cdn.socket.io/4.2.0/socket.io.min.js"
             integrity="sha384-PiBR5S00EtOj2Lto9Uu81cmoyZqR57XcOna1oAuVuIEjzj0wpqDVfD0JA9eXlRsj"
             crossorigin="anonymous"></script>
     <script>
-        let socket = io();
 
-        socket.on('connect', () => {
-            document.getElementById('connect-id').innerHTML = 'Connected with id: ' + socket.id;
-            document.getElementById('connect-button').setAttribute('value', 'Disconnect');
-        });
-
-        socket.on('disconnect', () => {
-            document.getElementById('connect-id').innerHTML = 'Not connected';
-            document.getElementById('connect-button').setAttribute('value', 'Connect');
-        });
-
-        socket.on('signal', (data) => {
-            console.log('signal', data);
-            appendData(data);
-        });
-
-        socket.on('time', (timeString) => {
-            document.getElementById('server-time').innerHTML = 'Server time: ' + timeString;
-        });
+        let workspace = null;
 
         const toggleConnection = () => {
-            if (socket.connected) {
+            if (workspace && workspace.connected) {
                 document.getElementById('connect-id').innerHTML = 'Disconnecting';
                 document.getElementById('send-button').disabled = true;
-                socket.disconnect();
+                workspace.disconnect();
             } else {
+                connect();
                 document.getElementById('connect-id').innerHTML = 'Connecting';
                 document.getElementById('send-button').disabled = false;
-                socket.connect();
             }
+        }
+
+        const connect = () => {
+            const callId = document.getElementById('call-id').value;
+            console.log('Connecting to call', callId);
+            workspace = io.connect("/" + callId);
+            workspace.on('connect', () => {
+                document.getElementById('connect-id').innerHTML = 'Call connected with id: ' + workspace.id;
+                document.getElementById('connect-button').setAttribute('value', 'Disconnect');
+            });
+
+            workspace.on('disconnect', () => {
+                document.getElementById('connect-id').innerHTML = 'Not connected';
+                document.getElementById('connect-button').setAttribute('value', 'Connect');
+            });
+
+            workspace.on('signal', (data) => {
+                console.log('signal', data);
+                appendData(data);
+            });
+
+            workspace.on('time', (timeString) => {
+                document.getElementById('server-time').innerHTML = 'Server time: ' + timeString;
+            });
         }
 
         const sendSignal = () => {
             const field = document.getElementById('input-field');
-            socket.emit('signal', field.value);
+            workspace.emit('signal', field.value);
             appendData(field.value);
             field.value = "";
         }
@@ -57,7 +63,10 @@
 <body>
 <p id="server-time"></p>
 <p id="connect-id">Not connected</p>
-<input id="connect-button" type="button" value="XX" onclick="toggleConnection()"/>
+<p>A call id has seven digits.</p>
+<p>Call id:<input id="call-id" type="text"/>
+<input id="connect-button" type="button" value="Connect" onclick="toggleConnection()"/>
+</p>
 <div id="signal-list">
 
 </div>
@@ -65,7 +74,7 @@
     <label>
         <input id="input-field" type="text"/>
     </label>
-    <input id="send-button" type="button" value="Send" onclick="sendSignal()"/>
+    <input id="send-button" type="button" value="Send" disabled  onclick="sendSignal()"/>
 </div>
 </body>
 </html>
