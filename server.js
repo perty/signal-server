@@ -14,7 +14,7 @@ const app = express()
 
 const io = new Server(app, {cors: {origin: '*'}});
 
-const workspaces = io.of(/^\/[0-9]{7}$/);
+const workspaces = io.of(/^\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/);
 
 workspaces.on('connection', (socket) => {
     const workspace = socket.nsp;
